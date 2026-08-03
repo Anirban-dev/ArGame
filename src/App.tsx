@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Smartphone,
   Code2,
@@ -25,7 +25,19 @@ import {
   ChevronDown,
   RefreshCw,
   ExternalLink,
-  Box
+  Box,
+  Camera,
+  Video,
+  VideoOff,
+  User,
+  Cpu,
+  Database,
+  Crosshair,
+  Zap,
+  Activity,
+  Shield,
+  ArrowDown,
+  Radio
 } from "lucide-react";
 import { defaultAndroidProject } from "./data/defaultAndroidProject";
 import { GeminiLinkBanner } from "./components/GeminiLinkBanner";
@@ -41,6 +53,77 @@ export default function App() {
   const [phoneTheme, setPhoneTheme] = useState<"light" | "dark">("light");
   const [activePhoneTab, setActivePhoneTab] = useState("home");
   const [cardsState, setCardsState] = useState<PreviewCard[]>(project.previewState.cards);
+  const [isWebcamActive, setIsWebcamActive] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Persistent Multi-Game Architecture State
+  const [activeGameModule, setActiveGameModule] = useState<"shooter" | "runner" | "puzzle">("shooter");
+  const [playerTotalXp, setPlayerTotalXp] = useState(1450);
+  const [playerCoins, setPlayerCoins] = useState(320);
+  const [shooterScore, setShooterScore] = useState(850);
+  const [runnerScore, setRunnerScore] = useState(1200);
+  const [puzzleAnchors, setPuzzleAnchors] = useState(14);
+  const [showArchDiagram, setShowArchDiagram] = useState(false);
+  const [architectureLogs, setArchitectureLogs] = useState<string[]>([
+    "[ProfileManager] User Auth: Verified (usr_ar_994 • Level 8)",
+    "[SharedDataManager] Cloud Sync: Online (1,450 XP)",
+    "[GameLauncherManager] Additive Load -> Dynamic Module 'TargetShooterGame' (IMiniGame)",
+    "[IMiniGame] Initialized -> State: RUNNING"
+  ]);
+
+  const handleModuleSwitch = (module: "shooter" | "runner" | "puzzle") => {
+    setActiveGameModule(module);
+    const titleMap = {
+      shooter: "AR Target Shooter",
+      runner: "Spatial Speed Runner",
+      puzzle: "AR Studio & Spatial Ruler"
+    };
+    setArchitectureLogs((prev) => [
+      ...prev.slice(-12),
+      `[GameLauncherManager] Unloading current module...`,
+      `[GameLauncherManager] Dynamic Load -> IMiniGame '${titleMap[module]}'`,
+      `[IMiniGame] State: RUNNING (Syncing events to SharedDataManager)`
+    ]);
+  };
+
+  const handleGameAction = (points: number, eventDesc: string) => {
+    setPlayerTotalXp((prev) => prev + points);
+    if (activeGameModule === "shooter") {
+      setShooterScore((prev) => prev + points);
+    } else if (activeGameModule === "runner") {
+      setRunnerScore((prev) => prev + points);
+    } else {
+      setPuzzleAnchors((prev) => prev + 1);
+    }
+    setArchitectureLogs((prev) => [
+      ...prev.slice(-12),
+      `[IMiniGame -> SharedData] Event: ${eventDesc} (+${points} XP)`,
+      `[SharedDataManager] Sunk Progress -> Total XP: ${playerTotalXp + points}`
+    ]);
+  };
+
+  const toggleWebcam = async () => {
+    if (isWebcamActive) {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => track.stop());
+        videoRef.current.srcObject = null;
+      }
+      setIsWebcamActive(false);
+    } else {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" }
+        });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+        setIsWebcamActive(true);
+      } catch (err) {
+        alert("Camera permission denied or camera unavailable in this browser context.");
+      }
+    }
+  };
   const [buildLogs, setBuildLogs] = useState<string[]>([
     "Executing tasks: [:app:assembleDebug]",
     "Starting Gradle Daemon...",
@@ -410,25 +493,76 @@ export default function App() {
                 </div>
               </div>
 
-              {/* AR Top HUD Bar */}
-              <div className="p-3 bg-slate-950/80 backdrop-blur border-b border-slate-800/80 flex items-center justify-between z-20 shrink-0">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <div>
-                    <h2 className="font-bold text-xs text-slate-100 leading-tight">
-                      AR Spatial Viewfinder
-                    </h2>
-                    <p className="text-[10px] text-slate-400 font-mono">
-                      ARCore 1.41.0 &bull; Jetpack Compose
-                    </p>
+              {/* Top HUD - PERSISTENT CORE LAUNCHER BAR */}
+              <div className="bg-slate-950 p-2.5 border-b border-indigo-900/60 z-20 shrink-0 select-none">
+                {/* Profile & Auth Manager */}
+                <div className="flex items-center justify-between text-[11px] pb-2 border-b border-slate-800/80">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-white text-[10px] font-bold">
+                      CP
+                    </div>
+                    <div>
+                      <span className="font-semibold text-slate-200">CyberPilot_AR</span>
+                      <span className="ml-1 text-[9px] text-indigo-400 font-mono">Lvl 8</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 font-mono text-[10px]">
+                    <span className="text-amber-400 font-bold">{playerTotalXp} XP</span>
+                    <span className="text-emerald-400 font-bold">{playerCoins} Coins</span>
                   </div>
                 </div>
-                <button
-                  onClick={() => setCardsState([])}
-                  className="px-2 py-1 bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800/50 rounded text-[10px] transition-colors"
-                >
-                  Clear Anchors
-                </button>
+
+                {/* Shared Data & Core Controller Status */}
+                <div className="mt-2 flex items-center justify-between text-[10px]">
+                  <div className="flex items-center gap-1 text-slate-300">
+                    <Cpu className="w-3 h-3 text-indigo-400" />
+                    <span className="font-mono text-indigo-300 font-medium">IMiniGame Module:</span>
+                  </div>
+                  <button
+                    onClick={() => setShowArchDiagram(!showArchDiagram)}
+                    className="px-2 py-0.5 rounded bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/60 text-[9px] flex items-center gap-1 font-mono transition-colors"
+                  >
+                    <Layers className="w-3 h-3 text-indigo-400" />
+                    <span>{showArchDiagram ? "Hide Diagram" : "Arch Diagram"}</span>
+                  </button>
+                </div>
+
+                {/* Game Selector Tabs (Dynamic Module Loader) */}
+                <div className="mt-2 grid grid-cols-3 gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800 text-[10px]">
+                  <button
+                    onClick={() => handleModuleSwitch("shooter")}
+                    className={`py-1 rounded flex items-center justify-center gap-1 font-medium transition-colors ${
+                      activeGameModule === "shooter"
+                        ? "bg-indigo-600 text-white font-bold shadow"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    <Crosshair className="w-3 h-3" />
+                    <span>1. Shooter</span>
+                  </button>
+                  <button
+                    onClick={() => handleModuleSwitch("runner")}
+                    className={`py-1 rounded flex items-center justify-center gap-1 font-medium transition-colors ${
+                      activeGameModule === "runner"
+                        ? "bg-indigo-600 text-white font-bold shadow"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    <Zap className="w-3 h-3" />
+                    <span>2. Runner</span>
+                  </button>
+                  <button
+                    onClick={() => handleModuleSwitch("puzzle")}
+                    className={`py-1 rounded flex items-center justify-center gap-1 font-medium transition-colors ${
+                      activeGameModule === "puzzle"
+                        ? "bg-indigo-600 text-white font-bold shadow"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    <Box className="w-3 h-3" />
+                    <span>3. Studio</span>
+                  </button>
+                </div>
               </div>
 
               {/* AR Viewport & Camera Feed Background */}
@@ -437,89 +571,242 @@ export default function App() {
                   const rect = e.currentTarget.getBoundingClientRect();
                   const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
                   const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-                  const newAnchor: PreviewCard = {
-                    id: Date.now().toString(),
-                    title: `3D AR Anchor #${cardsState.length + 1}`,
-                    subtitle: `Pos: (${x.toFixed(2)}m, ${y.toFixed(2)}m, -1.2m)`,
-                    badge: "Anchor Locked",
-                    value: "45° Rot",
-                    tag: "3D Compose Node",
-                    completed: true
-                  };
-                  setCardsState([...cardsState, newAnchor]);
+
+                  if (activeGameModule === "shooter") {
+                    handleGameAction(100, `Target Hit at (${x.toFixed(2)}m, ${y.toFixed(2)}m)`);
+                  } else if (activeGameModule === "runner") {
+                    handleGameAction(150, `Obstacle Dodged & Token Collected`);
+                  } else {
+                    const newAnchor: PreviewCard = {
+                      id: Date.now().toString(),
+                      title: `3D AR Node #${cardsState.length + 1}`,
+                      subtitle: `Pos: (${x.toFixed(2)}m, ${y.toFixed(2)}m, -1.2m)`,
+                      badge: "IMiniGame Anchor",
+                      value: "45° Rot",
+                      tag: "Spatial Studio",
+                      completed: true
+                    };
+                    setCardsState([...cardsState, newAnchor]);
+                    handleGameAction(50, `Spatial Anchor Placed`);
+                  }
                 }}
                 className="flex-1 relative bg-gradient-to-b from-slate-900 via-slate-950 to-indigo-950/50 overflow-hidden cursor-crosshair group select-none"
               >
+                {/* Live WebCam Stream Video */}
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  className={`absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-300 ${
+                    isWebcamActive ? "opacity-75" : "opacity-0"
+                  }`}
+                />
+
+                {/* Architecture Diagram Overlay (when toggled) */}
+                {showArchDiagram && (
+                  <div className="absolute inset-0 z-40 bg-slate-950/95 p-3 flex flex-col justify-between text-slate-200 font-mono text-[10px] backdrop-blur overflow-y-auto">
+                    <div>
+                      <div className="flex items-center justify-between pb-1.5 border-b border-indigo-800">
+                        <span className="font-bold text-indigo-400 flex items-center gap-1">
+                          <Layers className="w-3.5 h-3.5" /> ARCHITECTURE DIAGRAM
+                        </span>
+                        <button
+                          onClick={() => setShowArchDiagram(false)}
+                          className="text-slate-400 hover:text-white px-1.5 py-0.5 rounded bg-slate-800"
+                        >
+                          ✕ Close
+                        </button>
+                      </div>
+
+                      {/* Main Launcher App Persistent Box */}
+                      <div className="mt-2 p-2 rounded bg-indigo-950/70 border border-indigo-700/80">
+                        <div className="font-bold text-center text-indigo-300 mb-1.5">
+                          MAIN LAUNCHER APP (Persistent Core)
+                        </div>
+                        <div className="grid grid-cols-3 gap-1 text-[8px] text-center">
+                          <div className="p-1 rounded bg-slate-900 border border-slate-700">
+                            <User className="w-3 h-3 mx-auto text-indigo-400 mb-0.5" />
+                            <span>Profile/Auth Manager</span>
+                          </div>
+                          <div className="p-1 rounded bg-slate-900 border border-slate-700">
+                            <Cpu className="w-3 h-3 mx-auto text-indigo-400 mb-0.5" />
+                            <span>Core Controller (Scene)</span>
+                          </div>
+                          <div className="p-1 rounded bg-slate-900 border border-slate-700">
+                            <Database className="w-3 h-3 mx-auto text-indigo-400 mb-0.5" />
+                            <span>Shared Data / Score</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Communication Arrows */}
+                      <div className="my-1.5 flex justify-around text-[8px] text-indigo-400 font-bold text-center">
+                        <div className="flex flex-col items-center">
+                          <ArrowDown className="w-3 h-3 animate-bounce" />
+                          <span>Passes Input</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <ArrowDown className="w-3 h-3 animate-bounce" />
+                          <span>Loads/Unloads</span>
+                        </div>
+                        <div className="flex flex-col items-center">
+                          <ArrowDown className="w-3 h-3 animate-bounce" />
+                          <span>Sinks Progress</span>
+                        </div>
+                      </div>
+
+                      {/* Dynamic Mini-Game Module Box */}
+                      <div className="p-2 rounded bg-slate-900/90 border border-emerald-700/80">
+                        <div className="font-bold text-center text-emerald-300 mb-1.5">
+                          ACTIVE MINI-GAME MODULE (Dynamic IMiniGame)
+                        </div>
+                        <div className="grid grid-cols-3 gap-1 text-[8px] text-center">
+                          <div className={`p-1 rounded border ${activeGameModule === "shooter" ? "bg-indigo-900 border-indigo-400 font-bold text-white" : "bg-slate-950 border-slate-800 opacity-60"}`}>
+                            Game 1: Shooter
+                          </div>
+                          <div className={`p-1 rounded border ${activeGameModule === "runner" ? "bg-indigo-900 border-indigo-400 font-bold text-white" : "bg-slate-950 border-slate-800 opacity-60"}`}>
+                            Game 2: Runner
+                          </div>
+                          <div className={`p-1 rounded border ${activeGameModule === "puzzle" ? "bg-indigo-900 border-indigo-400 font-bold text-white" : "bg-slate-950 border-slate-800 opacity-60"}`}>
+                            Game 3: Studio
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-2 pt-1 border-t border-slate-800 text-[9px] text-slate-400">
+                      💡 Decoupled architecture: Launcher core manages user auth and score state while dynamic mini-game modules run via IMiniGame interface.
+                    </div>
+                  </div>
+                )}
+
+                {/* Webcam Controls & Info Banner */}
+                <div className="absolute top-2 inset-x-2 z-10 flex items-center justify-between">
+                  <button
+                    onClick={toggleWebcam}
+                    className={`px-2 py-1 flex items-center gap-1 border rounded text-[10px] font-mono shadow transition-colors backdrop-blur ${
+                      isWebcamActive
+                        ? "bg-emerald-950/90 text-emerald-300 border-emerald-700"
+                        : "bg-slate-950/90 text-slate-300 border-slate-700"
+                    }`}
+                  >
+                    {isWebcamActive ? <VideoOff className="w-3 h-3" /> : <Camera className="w-3 h-3" />}
+                    <span>{isWebcamActive ? "Cam Active" : "WebCam Feed"}</span>
+                  </button>
+                  <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-950/80 border border-slate-800 text-slate-300 font-mono">
+                    ARCore 1.41.0 &bull; Jetpack Compose
+                  </span>
+                </div>
+
                 {/* Simulated AR Feature Point Cloud */}
                 <div className="absolute inset-0 opacity-30 pointer-events-none bg-[radial-gradient(#818cf8_1px,transparent_1px)] [background-size:16px_16px]" />
 
                 {/* AR Horizon Plane Grid */}
                 <div className="absolute inset-x-0 bottom-12 h-36 border-t border-indigo-500/30 bg-gradient-to-t from-indigo-500/10 to-transparent transform perspective-500 rotate-x-60 pointer-events-none" />
 
-                {/* Center AR Reticle Target */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="w-24 h-24 rounded-full border border-indigo-400/50 flex items-center justify-center relative animate-pulse">
-                    <div className="w-2 h-2 rounded-full bg-indigo-400" />
-                    <div className="absolute top-0 w-px h-3 bg-indigo-400" />
-                    <div className="absolute bottom-0 w-px h-3 bg-indigo-400" />
-                    <div className="absolute left-0 w-3 h-px bg-indigo-400" />
-                    <div className="absolute right-0 w-3 h-px bg-indigo-400" />
-                  </div>
-                </div>
+                {/* GAME MODULE 1: AR SHOOTER TARGETS */}
+                {activeGameModule === "shooter" && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    {/* Animated Target Spheres */}
+                    <div className="absolute top-1/4 left-1/4 w-12 h-12 rounded-full border-2 border-rose-500 bg-rose-500/20 animate-ping flex items-center justify-center">
+                      <div className="w-4 h-4 rounded-full bg-rose-500" />
+                    </div>
+                    <div className="absolute bottom-1/3 right-1/4 w-10 h-10 rounded-full border-2 border-rose-400 bg-rose-500/30 animate-pulse flex items-center justify-center">
+                      <div className="w-3 h-3 rounded-full bg-rose-400" />
+                    </div>
 
-                {/* Rendered 3D AR Objects / Anchors in Viewport */}
-                {cardsState.map((card, idx) => {
-                  const topPos = 25 + (idx % 3) * 22;
-                  const leftPos = 20 + (idx % 2) * 45;
-                  return (
-                    <div
-                      key={card.id}
-                      style={{ top: `${topPos}%`, left: `${leftPos}%` }}
-                      className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-auto"
-                    >
-                      {/* 3D Model Visual Proxy */}
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-500 shadow-lg shadow-indigo-500/50 border border-white/30 flex items-center justify-center text-white transform hover:scale-110 transition-transform">
-                        <Box className="w-6 h-6 animate-bounce" />
+                    {/* Laser Crosshair */}
+                    <div className="w-20 h-20 rounded-full border border-rose-400/60 flex items-center justify-center relative">
+                      <div className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
+                      <div className="absolute top-0 w-px h-3 bg-rose-400" />
+                      <div className="absolute bottom-0 w-px h-3 bg-rose-400" />
+                      <div className="absolute left-0 w-3 h-px bg-rose-400" />
+                      <div className="absolute right-0 w-3 h-px bg-rose-400" />
+                    </div>
+
+                    <div className="absolute top-14 bg-slate-950/90 border border-rose-500/40 px-3 py-1 rounded-full text-[10px] text-rose-300 font-mono shadow">
+                      🎯 Tap view to Shoot Targets (+100 XP)
+                    </div>
+                  </div>
+                )}
+
+                {/* GAME MODULE 2: SPATIAL RUNNER */}
+                {activeGameModule === "runner" && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    {/* Speed Lines */}
+                    <div className="absolute inset-0 opacity-20 bg-[linear-gradient(to_bottom,transparent_0%,#818cf8_50%,transparent_100%)] animate-pulse" />
+                    
+                    {/* Floating Power Token */}
+                    <div className="absolute top-1/3 w-14 h-14 rounded-2xl bg-amber-500/30 border-2 border-amber-400 flex flex-col items-center justify-center animate-bounce text-amber-300 font-bold text-xs">
+                      <Zap className="w-5 h-5" />
+                      <span className="text-[9px]">2x Token</span>
+                    </div>
+
+                    <div className="absolute top-14 bg-slate-950/90 border border-amber-500/40 px-3 py-1 rounded-full text-[10px] text-amber-300 font-mono shadow">
+                      ⚡ Tap view to Dodge & Collect (+150 XP)
+                    </div>
+                  </div>
+                )}
+
+                {/* GAME MODULE 3: AR STUDIO */}
+                {activeGameModule === "puzzle" && (
+                  <>
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="w-24 h-24 rounded-full border border-indigo-400/50 flex items-center justify-center relative">
+                        <div className="w-2 h-2 rounded-full bg-indigo-400" />
                       </div>
-                      {/* Spatial Badge Tag */}
-                      <div className="mt-1 bg-slate-900/90 backdrop-blur border border-indigo-500/40 text-indigo-300 px-2 py-0.5 rounded text-[9px] font-mono shadow whitespace-nowrap">
-                        {card.title}
+                      <div className="absolute top-14 bg-slate-950/90 border border-indigo-500/40 px-3 py-1 rounded-full text-[10px] text-indigo-300 font-mono shadow">
+                        📦 Tap surface to Place 3D Anchor (+50 XP)
                       </div>
                     </div>
-                  );
-                })}
 
-                {/* AR Surface Detection Status Overlay */}
-                <div className="absolute top-3 inset-x-3 bg-slate-900/80 backdrop-blur border border-slate-800 p-2 rounded-lg flex items-center justify-between text-[11px] pointer-events-none">
-                  <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
-                    <Sparkles className="w-3.5 h-3.5" />
-                    <span>Plane Detected (Horizontal)</span>
-                  </div>
-                  <span className="text-[10px] text-slate-400 font-mono">
-                    Tap screen to drop 3D model
-                  </span>
-                </div>
+                    {cardsState.map((card, idx) => {
+                      const topPos = 25 + (idx % 3) * 22;
+                      const leftPos = 20 + (idx % 2) * 45;
+                      return (
+                        <div
+                          key={card.id}
+                          style={{ top: `${topPos}%`, left: `${leftPos}%` }}
+                          className="absolute -translate-x-1/2 -translate-y-1/2 flex flex-col items-center pointer-events-auto z-10"
+                        >
+                          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-500 shadow-lg shadow-indigo-500/50 border border-white/30 flex items-center justify-center text-white transform hover:scale-110 transition-transform">
+                            <Box className="w-5 h-5 animate-bounce" />
+                          </div>
+                          <div className="mt-1 bg-slate-900/90 backdrop-blur border border-indigo-500/40 text-indigo-300 px-1.5 py-0.5 rounded text-[8px] font-mono shadow whitespace-nowrap">
+                            {card.title}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
 
-                {/* Live Distance Meter Overlay */}
-                <div className="absolute bottom-3 left-3 right-3 bg-slate-900/90 backdrop-blur border border-indigo-500/30 p-2.5 rounded-xl flex items-center justify-between text-xs">
-                  <div>
-                    <span className="text-[10px] text-slate-400 block uppercase font-mono">
-                      Spatial Anchor Distance
+                {/* Bottom Live Data Sink Overlay */}
+                <div className="absolute bottom-2 inset-x-2 bg-slate-950/95 border border-indigo-500/40 p-2 rounded-xl text-[10px] z-20 shadow-xl">
+                  <div className="flex items-center justify-between font-mono text-indigo-300 font-medium mb-1 border-b border-slate-800 pb-1">
+                    <span className="flex items-center gap-1">
+                      <Radio className="w-3 h-3 text-emerald-400 animate-pulse" />
+                      <span>SHARED DATA SINK STREAM</span>
                     </span>
-                    <span className="font-bold text-indigo-300 font-mono text-sm">
-                      {cardsState.length > 1 ? "1.42 meters (55.9 in)" : "Tap surface for 2nd point"}
-                    </span>
+                    <span className="text-slate-400 text-[9px]">IMiniGame -&gt; SharedDataManager</span>
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAddNewCard();
-                    }}
-                    className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow flex items-center gap-1 transition-colors"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    Drop Node
-                  </button>
+                  <div className="h-10 overflow-y-auto font-mono text-[9px] text-slate-400 space-y-0.5">
+                    {architectureLogs.map((log, i) => (
+                      <div
+                        key={i}
+                        className={
+                          log.includes("Sunk") || log.includes("SharedData")
+                            ? "text-emerald-400 font-medium"
+                            : log.includes("Dynamic")
+                            ? "text-indigo-300"
+                            : ""
+                        }
+                      >
+                        {log}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
