@@ -1,0 +1,6 @@
+{
+  "name": "Kotlin Android App Studio",
+  "description": "Interactive Jetpack Compose Android application simulator and live Kotlin code generator.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
