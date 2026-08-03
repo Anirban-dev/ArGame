@@ -305,6 +305,28 @@ dependencies {
         <meta-data android:name="com.google.ar.core" android:value="required" />
     </application>
 </manifest>`
+    },
+    {
+      id: "backup-rules-xml",
+      name: "backup_rules.xml",
+      path: "app/src/main/res/xml/backup_rules.xml",
+      language: "xml",
+      content: `<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+</full-backup-content>`
+    },
+    {
+      id: "data-extraction-rules-xml",
+      name: "data_extraction_rules.xml",
+      path: "app/src/main/res/xml/data_extraction_rules.xml",
+      language: "xml",
+      content: `<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+    </cloud-backup>
+    <device-transfer>
+    </device-transfer>
+</data-extraction-rules>`
     }
   ]
 };
