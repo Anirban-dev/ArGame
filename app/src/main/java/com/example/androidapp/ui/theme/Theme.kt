@@ -1,4 +1,4 @@
-package com.example.arvision.ui.theme
+package com.example.androidapp.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*

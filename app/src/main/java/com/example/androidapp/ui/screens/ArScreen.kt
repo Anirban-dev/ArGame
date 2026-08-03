@@ -1,4 +1,4 @@
-package com.example.arvision.ui.screens
+package com.example.androidapp.ui.screens
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -20,8 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.arvision.viewmodel.ArMode
-import com.example.arvision.viewmodel.ArViewModel
+import com.example.androidapp.viewmodel.ArMode
+import com.example.androidapp.viewmodel.ArViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -112,7 +112,7 @@ fun ArScreen(
 
 @Composable
 fun ArCameraViewport(
-    uiState: com.example.arvision.viewmodel.ArUiState,
+    uiState: com.example.androidapp.viewmodel.ArUiState,
     onSurfaceTap: (Float, Float, Float) -> Unit
 ) {
     Box(

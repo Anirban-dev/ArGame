@@ -3,7 +3,7 @@ import { AndroidProject } from "../types";
 export const defaultAndroidProject: AndroidProject = {
   appName: "AR Vision Spatial Studio",
   appDescription: "Augmented Reality (ARCore & Jetpack Compose) Kotlin Android App for 3D Object Placement, Spatial Ruler, and Surface Mesh Detection.",
-  packageName: "com.example.arvision",
+  packageName: "com.example.androidapp",
   version: "1.0.0",
   targetSdk: 34,
   minSdk: 24,
@@ -50,10 +50,10 @@ export const defaultAndroidProject: AndroidProject = {
     {
       id: "main-activity",
       name: "MainActivity.kt",
-      path: "app/src/main/java/com/example/arvision/MainActivity.kt",
+      path: "app/src/main/java/com/example/androidapp/MainActivity.kt",
       language: "kotlin",
       isMain: true,
-      content: `package com.example.arvision
+      content: `package com.example.androidapp
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -68,8 +68,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
-import com.example.arvision.ui.screens.ArScreen
-import com.example.arvision.ui.theme.ArVisionTheme
+import com.example.androidapp.ui.screens.ArScreen
+import com.example.androidapp.ui.theme.ArVisionTheme
 
 /**
  * Android Main Activity for Augmented Reality (ARCore + Jetpack Compose).
@@ -119,9 +119,9 @@ class MainActivity : ComponentActivity() {
     {
       id: "ar-screen",
       name: "ArScreen.kt",
-      path: "app/src/main/java/com/example/arvision/ui/screens/ArScreen.kt",
+      path: "app/src/main/java/com/example/androidapp/ui/screens/ArScreen.kt",
       language: "kotlin",
-      content: `package com.example.arvision.ui.screens
+      content: `package com.example.androidapp.ui.screens
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -142,8 +142,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.arvision.viewmodel.ArMode
-import com.example.arvision.viewmodel.ArViewModel
+import com.example.androidapp.viewmodel.ArMode
+import com.example.androidapp.viewmodel.ArViewModel
 
 @Composable
 fun ArScreen(
@@ -176,9 +176,9 @@ fun ArScreen(
     {
       id: "ar-core-manager",
       name: "ArCoreManager.kt",
-      path: "app/src/main/java/com/example/arvision/ar/ArCoreManager.kt",
+      path: "app/src/main/java/com/example/androidapp/ar/ArCoreManager.kt",
       language: "kotlin",
-      content: `package com.example.arvision.ar
+      content: `package com.example.androidapp.ar
 
 import android.content.Context
 import com.google.ar.core.Anchor
@@ -226,13 +226,13 @@ class ArCoreManager(private val context: Context) {
     {
       id: "ar-viewmodel",
       name: "ArViewModel.kt",
-      path: "app/src/main/java/com/example/arvision/viewmodel/ArViewModel.kt",
+      path: "app/src/main/java/com/example/androidapp/viewmodel/ArViewModel.kt",
       language: "kotlin",
-      content: `package com.example.arvision.viewmodel
+      content: `package com.example.androidapp.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.arvision.ar.ArPlacedObject
-import com.example.arvision.ar.ArSpatialPoint
+import com.example.androidapp.ar.ArPlacedObject
+import com.example.androidapp.ar.ArSpatialPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -275,11 +275,11 @@ class ArViewModel : ViewModel() {
 }
 
 android {
-    namespace = "com.example.arvision"
+    namespace = "com.example.androidapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.arvision"
+        applicationId = "com.example.androidapp"
         minSdk = 24
         targetSdk = 34
     }
@@ -298,7 +298,7 @@ dependencies {
       path: "app/src/main/AndroidManifest.xml",
       language: "xml",
       content: `<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera.ar" android:required="true" />
     <application android:label="AR Vision Kotlin">

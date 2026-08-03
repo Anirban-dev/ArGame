@@ -1,9 +1,9 @@
-package com.example.arvision.viewmodel
+package com.example.androidapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.arvision.ar.ArPlacedObject
-import com.example.arvision.ar.ArSpatialPoint
+import com.example.androidapp.ar.ArPlacedObject
+import com.example.androidapp.ar.ArSpatialPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

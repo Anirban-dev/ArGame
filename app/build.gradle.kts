@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.arvision"
+    namespace = "com.example.androidapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.arvision"
+        applicationId = "com.example.androidapp"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

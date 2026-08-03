@@ -1,4 +1,4 @@
-package com.example.arvision
+package com.example.androidapp
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -13,8 +13,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
-import com.example.arvision.ui.screens.ArScreen
-import com.example.arvision.ui.theme.ArVisionTheme
+import com.example.androidapp.ui.screens.ArScreen
+import com.example.androidapp.ui.theme.ArVisionTheme
 
 /**
  * Android Main Activity for Augmented Reality (ARCore + Jetpack Compose).

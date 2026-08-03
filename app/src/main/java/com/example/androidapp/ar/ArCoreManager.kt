@@ -1,4 +1,4 @@
-package com.example.arvision.ar
+package com.example.androidapp.ar
 
 import android.content.Context
 import com.google.ar.core.Anchor

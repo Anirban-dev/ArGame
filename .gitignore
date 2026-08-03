@@ -5,4 +5,20 @@ coverage/
 .DS_Store
 *.log
 .env*
+package-lock.json
 !.env.example
+.gradle
+.idea
+.vscode/
+.kotlin
+
+# Android / Gradle local files
+local.properties
+*.iml
+*.hprof
+*.jks
+*.keystore
+*.apk
+*.aab
+.cxx/
+captures/
