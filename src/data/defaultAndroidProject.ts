@@ -1,362 +1,266 @@
 import { AndroidProject } from "../types";
 
 export const defaultAndroidProject: AndroidProject = {
-  appName: "TaskPulse Pro",
-  appDescription: "Modern Android Task & Productivity App built with Kotlin and Jetpack Compose Material 3.",
-  packageName: "com.example.taskpulse",
+  appName: "AR Vision Spatial Studio",
+  appDescription: "Augmented Reality (ARCore & Jetpack Compose) Kotlin Android App for 3D Object Placement, Spatial Ruler, and Surface Mesh Detection.",
+  packageName: "com.example.arvision",
   version: "1.0.0",
   targetSdk: 34,
   minSdk: 24,
   previewState: {
-    title: "TaskPulse Workspaces",
-    subtitle: "Focus on what matters today",
-    theme: "light",
-    primaryColor: "#4f46e5",
-    screenType: "task",
-    activeTab: "home",
+    title: "AR Spatial Viewfinder",
+    subtitle: "Google ARCore & Jetpack Compose",
+    theme: "dark",
+    primaryColor: "#6366f1",
+    screenType: "dashboard",
+    activeTab: "ar_view",
     navigation: [
-      { id: "home", label: "Tasks", icon: "CheckSquare", badgeCount: 4 },
-      { id: "projects", label: "Projects", icon: "Folder" },
-      { id: "analytics", label: "Metrics", icon: "BarChart3" },
-      { id: "settings", label: "Settings", icon: "Settings" }
+      { id: "ar_view", label: "AR Viewfinder", icon: "Box" },
+      { id: "measure", label: "Spatial Ruler", icon: "Ruler" },
+      { id: "catalog", label: "3D Catalog", icon: "Folder" },
+      { id: "settings", label: "AR Settings", icon: "Settings" }
     ],
     cards: [
       {
         id: "1",
-        title: "Design System Migration to Material 3",
-        subtitle: "Update color palette, typography tokens, and surface specs",
-        badge: "High Priority",
-        value: "2h left",
-        tag: "Design",
-        completed: false,
-        time: "10:30 AM",
-        category: "UI/UX"
+        title: "Modern Lounge Chair",
+        subtitle: "Position: X: 0.20m, Y: -0.40m, Z: -1.20m",
+        badge: "Placed",
+        value: "45° Rot",
+        tag: "Furniture 3D",
+        completed: true,
+        time: "AR Anchor #1",
+        category: "3D Model"
       },
       {
         id: "2",
-        title: "Kotlin Coroutines & Flow Optimization",
-        subtitle: "Refactor background repository sync using StateFlow & SupervisorJob",
-        badge: "In Progress",
-        value: "4h left",
-        tag: "Backend",
-        completed: false,
-        time: "01:15 PM",
-        category: "Architecture"
-      },
-      {
-        id: "3",
-        title: "Unit Test Jetpack ViewModel & State",
-        subtitle: "Achieve 90% code coverage on Kotlin domain use-cases",
-        badge: "Review",
-        value: "Today",
-        tag: "Testing",
+        title: "Cyber Portal Ring",
+        subtitle: "Position: X: -0.50m, Y: 0.10m, Z: -1.80m",
+        badge: "Active Anchor",
+        value: "90° Rot",
+        tag: "Sci-Fi FX",
         completed: true,
-        time: "03:45 PM",
-        category: "Quality"
-      },
-      {
-        id: "4",
-        title: "Prepare APK & App Bundle for Google Play",
-        subtitle: "Generate signed release AAB bundle with ProGuard mapping",
-        badge: "Pending",
-        value: "Tomorrow",
-        tag: "Release",
-        completed: false,
-        time: "05:00 PM",
-        category: "DevOps"
+        time: "AR Anchor #2",
+        category: "3D Effect"
       }
     ],
-    actionButtonText: "New Kotlin Task"
+    actionButtonText: "Place 3D Anchor in AR"
   },
   files: [
     {
       id: "main-activity",
       name: "MainActivity.kt",
-      path: "app/src/main/java/com/example/taskpulse/MainActivity.kt",
+      path: "app/src/main/java/com/example/arvision/MainActivity.kt",
       language: "kotlin",
       isMain: true,
-      content: `package com.example.taskpulse
+      content: `package com.example.arvision
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.taskpulse.ui.navigation.TaskPulseAppNav
-import com.example.taskpulse.ui.theme.TaskPulseTheme
+import androidx.core.content.ContextCompat
+import com.example.arvision.ui.screens.ArScreen
+import com.example.arvision.ui.theme.ArVisionTheme
 
 /**
- * Main Entry Point for TaskPulse Android Application.
- * Built with Jetpack Compose, Material 3, and Kotlin Coroutines.
+ * Android Main Activity for Augmented Reality (ARCore + Jetpack Compose).
+ * Requests Camera permissions and mounts the AR Spatial Viewfinder.
  */
 class MainActivity : ComponentActivity() {
+
+    private val requestCameraPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (!isGranted) {
+                Toast.makeText(
+                    this,
+                    "Camera permission is required for AR Spatial Tracking",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        checkCameraPermission()
+
         setContent {
-            TaskPulseTheme {
+            ArVisionTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    TaskPulseAppNav()
+                    ArScreen()
                 }
             }
         }
     }
+
+    private fun checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestCameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+        }
+    }
 }`
     },
     {
-      id: "main-screen",
-      name: "TaskScreen.kt",
-      path: "app/src/main/java/com/example/taskpulse/ui/screens/TaskScreen.kt",
+      id: "ar-screen",
+      name: "ArScreen.kt",
+      path: "app/src/main/java/com/example/arvision/ui/screens/ArScreen.kt",
       language: "kotlin",
-      content: `package com.example.taskpulse.ui.screens
+      content: `package com.example.arvision.ui.screens
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.RadioButtonUnchecked
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.taskpulse.viewmodel.TaskViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.arvision.viewmodel.ArMode
+import com.example.arvision.viewmodel.ArViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskScreen(
-    viewModel: TaskViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    onAddTaskClick: () -> Unit
+fun ArScreen(
+    viewModel: ArViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Column {
-                        Text(
-                            text = "TaskPulse Workspaces",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Focus on what matters today",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            )
-        },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = onAddTaskClick,
-                icon = { Icon(Icons.Default.Add, contentDescription = "Add") },
-                text = { Text("New Task") },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(vertical = 12.dp)
-        ) {
-            item {
-                TaskSummaryHeader(
-                    completedCount = uiState.tasks.count { it.isCompleted },
-                    totalCount = uiState.tasks.size
-                )
+    Box(modifier = Modifier.fillMaxSize()) {
+        // AR Viewfinder & Surface Mesh Layer
+        ArCameraViewport(
+            uiState = uiState,
+            onSurfaceTap = { x, y, z ->
+                if (uiState.activeMode == ArMode.SPATIAL_MEASURE) {
+                    viewModel.addMeasurePoint(x, y, z)
+                } else {
+                    viewModel.placeObjectAt(x, y, z)
+                }
             }
+        )
 
-            items(uiState.tasks, key = { it.id }) { task ->
-                TaskItemCard(
-                    task = task,
-                    onToggleComplete = { viewModel.toggleTaskCompletion(task.id) }
-                )
-            }
-        }
+        // Top AR HUD Info Overlay
+        ArHeaderBar(
+            title = uiState.appTitle,
+            trackingStatus = uiState.trackingStatus,
+            onClearClick = { viewModel.clearAllObjects() }
+        )
+    }
+}`
+    },
+    {
+      id: "ar-core-manager",
+      name: "ArCoreManager.kt",
+      path: "app/src/main/java/com/example/arvision/ar/ArCoreManager.kt",
+      language: "kotlin",
+      content: `package com.example.arvision.ar
+
+import android.content.Context
+import com.google.ar.core.Anchor
+import com.google.ar.core.Config
+import com.google.ar.core.Session
+import kotlin.math.sqrt
+
+data class ArSpatialPoint(val x: Float, val y: Float, val z: Float) {
+    fun distanceTo(other: ArSpatialPoint): Float {
+        val dx = x - other.x
+        val dy = y - other.y
+        val dz = z - other.z
+        return sqrt(dx * dx + dy * dy + dz * dz)
     }
 }
 
-@Composable
-fun TaskSummaryHeader(completedCount: Int, totalCount: Int) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
-        ),
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Row(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column {
-                Text(
-                    text = "Daily Progress",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                Text(
-                    text = "$completedCount of $totalCount completed",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
+data class ArPlacedObject(
+    val id: String,
+    val name: String,
+    val modelUri: String,
+    val position: ArSpatialPoint,
+    val scale: Float = 1.0f,
+    val rotationY: Float = 0.0f
+)
+
+class ArCoreManager(private val context: Context) {
+    private var arSession: Session? = null
+
+    fun initializeSession(): Boolean {
+        return try {
+            arSession = Session(context).apply {
+                val config = Config(this).apply {
+                    focusMode = Config.FocusMode.AUTO
+                    planeFindingMode = Config.PlaneFindingMode.HORIZONTAL_AND_VERTICAL
+                }
+                configure(config)
             }
-            LinearProgressIndicator(
-                progress = { if (totalCount > 0) completedCount.toFloat() / totalCount else 0f },
-                modifier = Modifier
-                    .width(100.dp)
-                    .height(8.dp)
-                    .clip(RoundedCornerShape(4.dp))
-            )
+            true
+        } catch (e: Exception) {
+            false
         }
     }
 }`
     },
     {
-      id: "view-model",
-      name: "TaskViewModel.kt",
-      path: "app/src/main/java/com/example/taskpulse/viewmodel/TaskViewModel.kt",
+      id: "ar-viewmodel",
+      name: "ArViewModel.kt",
+      path: "app/src/main/java/com/example/arvision/viewmodel/ArViewModel.kt",
       language: "kotlin",
-      content: `package com.example.taskpulse.viewmodel
+      content: `package com.example.arvision.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.example.arvision.ar.ArPlacedObject
+import com.example.arvision.ar.ArSpatialPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
-data class TaskModel(
-    val id: String,
-    val title: String,
-    val description: String,
-    val isCompleted: Boolean,
-    val priority: String,
-    val dueDate: String
+enum class ArMode { OBJECT_PLACEMENT, SPATIAL_MEASURE, SURFACE_DETECTOR }
+
+data class ArUiState(
+    val appTitle: String = "AR Vision Studio",
+    val activeMode: ArMode = ArMode.OBJECT_PLACEMENT,
+    val selectedModelName: String = "Modern Chair",
+    val trackingStatus: String = "Plane Detected • Tap Surface",
+    val placedObjects: List<ArPlacedObject> = emptyList()
 )
 
-data class TaskUiState(
-    val tasks: List<TaskModel> = emptyList(),
-    val isLoading: Boolean = false,
-    val error: String? = null
-)
+class ArViewModel : ViewModel() {
+    private val _uiState = MutableStateFlow(ArUiState())
+    val uiState: StateFlow<ArUiState> = _uiState.asStateFlow()
 
-class TaskViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(TaskUiState())
-    val uiState: StateFlow<TaskUiState> = _uiState.asStateFlow()
-
-    init {
-        loadTasks()
-    }
-
-    private fun loadTasks() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            val initialTasks = listOf(
-                TaskModel("1", "Design System Migration to Material 3", "Update color tokens", false, "High", "2h left"),
-                TaskModel("2", "Kotlin Coroutines & Flow Optimization", "Refactor background repo", false, "Medium", "4h left"),
-                TaskModel("3", "Unit Test Jetpack ViewModel", "Achieve 90% coverage", true, "Low", "Done")
-            )
-            _uiState.update { it.copy(tasks = initialTasks, isLoading = false) }
-        }
-    }
-
-    fun toggleTaskCompletion(taskId: String) {
-        _uiState.update { currentState ->
-            val updated = currentState.tasks.map { task ->
-                if (task.id == taskId) task.copy(isCompleted = !task.isCompleted) else task
-            }
-            currentState.copy(tasks = updated)
-        }
-    }
-
-    fun addTask(title: String, description: String) {
-        val newTask = TaskModel(
+    fun placeObjectAt(x: Float, y: Float, z: Float) {
+        val newObj = ArPlacedObject(
             id = System.currentTimeMillis().toString(),
-            title = title,
-            description = description,
-            isCompleted = false,
-            priority = "Normal",
-            dueDate = "Today"
+            name = _uiState.value.selectedModelName,
+            modelUri = "models/chair.gltf",
+            position = ArSpatialPoint(x, y, z)
         )
-        _uiState.update { currentState ->
-            currentState.copy(tasks = listOf(newTask) + currentState.tasks)
-        }
+        _uiState.update { it.copy(placedObjects = it.placedObjects + newObj) }
     }
-}`
-    },
-    {
-      id: "theme-kt",
-      name: "Theme.kt",
-      path: "app/src/main/java/com/example/taskpulse/ui/theme/Theme.kt",
-      language: "kotlin",
-      content: `package com.example.taskpulse.ui.theme
-
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-
-private val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFF818CF8),
-    secondary = Color(0xFFC7D2FE),
-    tertiary = Color(0xFFF472B6),
-    background = Color(0xFF0F172A),
-    surface = Color(0xFF1E293B)
-)
-
-private val LightColorScheme = lightColorScheme(
-    primary = Color(0xFF4F46E5),
-    secondary = Color(0xFF6366F1),
-    tertiary = Color(0xFFEC4899),
-    background = Color(0xFFF8FAFC),
-    surface = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFFEEF2FF),
-    onPrimaryContainer = Color(0xFF312E81)
-)
-
-@Composable
-fun TaskPulseTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
 }`
     },
     {
@@ -365,57 +269,27 @@ fun TaskPulseTheme(
       path: "app/build.gradle.kts",
       language: "kotlin",
       content: `plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
-    namespace = "com.example.taskpulse"
+    namespace = "com.example.arvision"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.taskpulse"
+        applicationId = "com.example.arvision"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-    buildFeatures {
-        compose = true
     }
 }
 
 dependencies {
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation("androidx.navigation:navigation-compose:2.7.7")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("com.google.ar:core:1.41.0")
+    implementation("io.github.sceneview:arsceneview:0.10.0")
+    implementation(platform("androidx.compose:compose-bom:2024.02.01"))
+    implementation("androidx.compose.material3:material3")
 }`
     },
     {
@@ -424,35 +298,12 @@ dependencies {
       path: "app/src/main/AndroidManifest.xml",
       language: "xml",
       content: `<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
-    <application
-        android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="TaskPulse Pro"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.TaskPulse"
-        tools:targetApi="31">
-        
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="TaskPulse Pro"
-            android:theme="@style/Theme.TaskPulse">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+<manifest xmlns:android="http://schemas.android.com/apk/android">
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.ar" android:required="true" />
+    <application android:label="AR Vision Kotlin">
+        <meta-data android:name="com.google.ar.core" android:value="required" />
     </application>
-
 </manifest>`
     }
   ]

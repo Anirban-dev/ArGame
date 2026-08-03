@@ -1,4 +1,4 @@
-package com.example.androidapp.ui.theme
+package com.example.arvision.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
@@ -6,9 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Color(0xFF818CF8),
-    secondary = Color(0xFFC7D2FE),
-    tertiary = Color(0xFFF472B6),
+    primary = Color(0xFF6366F1),
+    secondary = Color(0xFF818CF8),
+    tertiary = Color(0xFF38BDF8),
     background = Color(0xFF0F172A),
     surface = Color(0xFF1E293B)
 )
@@ -16,15 +16,13 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF4F46E5),
     secondary = Color(0xFF6366F1),
-    tertiary = Color(0xFFEC4899),
+    tertiary = Color(0xFF0284C7),
     background = Color(0xFFF8FAFC),
-    surface = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFFEEF2FF),
-    onPrimaryContainer = Color(0xFF312E81)
+    surface = Color(0xFFFFFFFF)
 )
 
 @Composable
-fun KotlinAndroidTheme(
+fun ArVisionTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {

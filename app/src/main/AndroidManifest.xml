@@ -1,27 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- AR Hardware & Camera Permissions -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.ar" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true font" />
+    <uses-feature android:name="android.hardware.sensor.gyroscope" android:required="true" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="Kotlin Android Studio"
+        android:label="AR Vision Kotlin"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.KotlinAndroidApp"
+        android:theme="@style/Theme.ARVision"
         tools:targetApi="31">
         
+        <!-- Google ARCore Required Metadata -->
+        <meta-data
+            android:name="com.google.ar.core"
+            android:value="required" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="Kotlin Android App"
-            android:theme="@style/Theme.KotlinAndroidApp">
+            android:label="AR Vision"
+            android:theme="@style/Theme.ARVision"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|screenSize|keyboardHidden|density">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

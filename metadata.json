@@ -1,6 +1,6 @@
 {
-  "name": "Kotlin Android App Studio",
-  "description": "Interactive Jetpack Compose Android application simulator and live Kotlin code generator.",
-  "requestFramePermissions": [],
+  "name": "AR Vision Kotlin Android App",
+  "description": "Production-grade Kotlin Android Augmented Reality (ARCore & Jetpack Compose) application with 3D spatial object placement, plane detection, and distance measurement.",
+  "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
