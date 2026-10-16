@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.androidapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.androidapp"
@@ -20,7 +20,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -49,10 +49,9 @@ dependencies {
     implementation("com.google.ar:core:1.41.0")
 
     // SceneView AR Jetpack Compose 3D Engine
-    implementation("io.github.sceneview:arsceneview:0.10.0")
-
+    implementation("io.github.sceneview:arsceneview:2.3.0")
     // Jetpack Compose BOM & UI
-    implementation(platform("androidx.compose:compose-bom:2024.02.01"))
+    implementation(platform("androidx.compose:compose-bom:2024.12.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")

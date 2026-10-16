@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.example.androidapp.loader.DynamicGameLoader
 import com.example.androidapp.loader.DynamicGamePackage
 import com.example.androidapp.mode1.FruitNinja2DGame
+import com.example.androidapp.ui.screens.ARFruitNinjaGame
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -441,8 +442,8 @@ fun ArScreen() {
                 }
             }
         } else if (activeGame?.packageId == "g1") {
-            // Built-in Fruit Ninja game
-            FruitNinja2DGame(
+            // Real AR mode: ARCore camera + plane tracking + anchored 3D apple.
+            ARFruitNinjaGame(
                 onExit = { activeGame = null }
             )
         } else {
