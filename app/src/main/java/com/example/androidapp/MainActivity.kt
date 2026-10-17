@@ -13,7 +13,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
-import com.example.androidapp.ui.screens.ArScreen
+import com.example.androidapp.games.FruitNinjaPlugin
+import com.example.androidapp.games.RoomEditorPlugin
+import com.example.androidapp.games.SpatialRunnerPlugin
+import com.example.androidapp.games.TargetShooterPlugin
+import com.example.androidapp.ui.screens.NativeAppScreen
 import com.example.androidapp.ui.theme.ArVisionTheme
 
 /**
@@ -45,7 +49,14 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ArScreen()
+                    NativeAppScreen(
+                        games = listOf(
+                            FruitNinjaPlugin,
+                            SpatialRunnerPlugin,
+                            TargetShooterPlugin,
+                            RoomEditorPlugin
+                        )
+                    )
                 }
             }
         }

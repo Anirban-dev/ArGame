@@ -13,5 +13,13 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "KotlinAndroidApp"
-include(":app")
+rootProject.name = "ArGamePlatform"
+include(
+    ":app",
+    ":platform",
+    ":game-api",
+    ":games:fruit-ninja",
+    ":games:spatial-runner",
+    ":games:target-shooter",
+    ":games:room-editor"
+)
